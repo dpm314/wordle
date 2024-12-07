@@ -87,7 +87,8 @@ class Guess():
 
         pstr = TXT_COLORS.BOLD + ""
         for i in range(len(self.text)):
-            pstr += LETTER_COLOR_DICT[ self.letterStatus[i] ] + " " + self.text[i].upper()
+            pstr += LETTER_COLOR_DICT[ self.letterStatus[i] ] + " "
+            + self.text[i].upper()
         return pstr
 
 class WordleBoard():
@@ -111,7 +112,7 @@ class WordleBoard():
             self.ANSWER = self._getRandomWord()
 
         else:
-            self.ANSWER = answer
+            self.ANSWER = answer.lower()
 
         # WHY THIS DON'T WORK???:
         #    self.available = [copy.copy(myLetters)] * self.lineLength
@@ -119,7 +120,7 @@ class WordleBoard():
             self.available.append( copy.copy(myLetters))
 
         if not self.printNothing:
-            print("The ANSWER is {} ".format(self.ANSWER) )
+            print("The ANSWER is: \t {} ".format(self.ANSWER) )
     #
 
     def _getRandomWord(self):
@@ -222,9 +223,9 @@ class WordleBoard():
             if not self.printNothing:
                 print("Letters Available at Location {}: {}"
                   .format(_, self.available[_] ))
-        if len(b.currentWordList) == 1:
-            if not self.printNothing:
-                print("YOU WIN! {}".format( self.currentWordList) )
+        #if len(b.currentWordList) == 1:
+        #    if not self.printNothing:
+        #        print("YOU WIN! {}".format( self.currentWordList) )
 
         if printCurrentWordList:
             self.printCurrentWordListFancy()
@@ -244,7 +245,6 @@ class WordleBoard():
             if not self.printNothing:
                 print ("Remaing Words: \n\t", '%s' % ', '
                    .join(map(str, self.currentWordList)))
-##############################################################################
 
     def setAnswer(self, answer):
         self.ANSWER = answer
@@ -275,6 +275,8 @@ class WordleBoard():
 
         if guessWord == None:
             guessWord = self._getRandomWord() # from current word list
+        
+        guessWord = guessWord.lower() #incase user enters with any capital letters
 
         if len(guessWord) != self.lineLength:
             if not self.printNothing:
@@ -306,6 +308,21 @@ class WordleBoard():
 
         #Store for future diagnostics etc:
         self.guessList.append( Guess(guessWord ))
+        
+        if self._checkWon() == True:
+            self.WON = True
+            self._printYouWon()
+        
+    def _checkWon(self):
+        if len(self.currentWordList) == 1:
+            self.WIN = True
+            self._printYouWon()
+        elif len(self.currentWordList) == 0:
+            print("ANSWER Not in Wordle Dictionary")
+            self.WIN = True # just to terminate iterations ? Dunno if needed or possible unless manuall entered guess word
+
+    def _printYouWon(self):
+        print("YOU WIN!: {} !".format(self.currentWordList))
 
     def playAutoGen(self, maxIterations = 6):
         for i in range(1, maxIterations):
@@ -315,46 +332,16 @@ class WordleBoard():
             self.applyGuess()
 
             if self.WON:
-                if not self.printNothing:
-                    print("YOU WIN! {}".format( self.currentWordList) )
-                    print("In {} Iterations".format(len(self.guessList)) )
                 break
 
-        if self.WON == False:
-            if not self.printNothing:
-                print("DID NOT WIN after {} iterations \n".format(maxIterations))
-            self.printCurrentWordListFancy()
-
 #%%
-# ToDo: 
-
-#   read from github list
-
-#   get wordlist and letters in Wordle class (currenly BoardLine() )
-#       allWords = nltk.corpus.words.words()
-#       words = getWordsOfLength(allWords, wordLength = 5)
-
-
-#%%
-#
-# NOT       = 0
-# SOMEWHERE = 1
-# HERE      = 2
-
-
-# LETTER_COLOR_DICT = {
-#     NOT       : TXT_COLORS.red    ,
-#     SOMEWHERE : TXT_COLORS.orange ,
-#     HERE      : TXT_COLORS.green
-#     }
-
-#%%
-# # nyt 11/14
 words = readWordleWordSet()
 letters =  list(map(chr, range(97,123))) #26 lower-case ASCII "a-z"
 b = WordleBoard(myLetters = letters, 
               words = words,
-              answer=None)
+              answer='Slate')
+#%%
+b.playAutoGen(maxIterations=6)
 #%%
 #Guess: AMIGO
 b.removeLetterAtLocation('a',0)
@@ -376,7 +363,7 @@ words = readWordleWordSet()
 letters =  list(map(chr, range(97,123))) #26 lower-case ASCII "a-z"
 b = WordleBoard(myLetters = letters, 
               words = words,
-              answer=None)
+              answer='Vinyl')
 b.printDiagnostics()
 #%% Apply NYT guess )In real time)move
 # Guess: SLATE: X~XXX
@@ -386,12 +373,11 @@ b.removeLetterAtLocation('l', 1)
 b.removeLettersEverywhere(['d','r','o'])
 b.removeLetterAtLocation('i', 3)
 b.setOnlyLetter('l', 4)
-#%%
 #%% Guess: CHILL XX~X!
 b.removeLettersEverywhere(['c','h'])
 b.removeLetterAtLocation('i', 2)
 # Guess VINYL: win!
-
+b.applyGuess(guessWord='vinyl')
 
 
 
@@ -405,7 +391,7 @@ b = WordleBoard(myLetters = letters,
 b.printDiagnostics()
 #%%
 b.playAutoGen(maxIterations=6)
-S#%%
+#%%
 
 #%%
 startTime = time.time()
