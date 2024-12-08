@@ -1080,12 +1080,15 @@ class WordleBoard:
         self.boardIterations += 1
         self.guessList.append(Guess(guessWord))
 
+
+        if self.printTheDiagnostics:
+            self.printDiagnostics(printCurrentWordList=True)
         self._checkWon()
+
 
         if self.WON == True:
             self._printYouWon()
-        if self.printTheDiagnostics:
-            self.printDiagnostics()
+
 
     def _checkWon(self):
 
@@ -1160,21 +1163,19 @@ print(a.currentWordList)
 #   .currentWordList and a.available then
 #   counts len(.currentWordList) for each and
 #   returns the guess which shortens .currentWordList
-#   the most ?
+#   the most ? NOPE that will always work on the first try
 
-# maybe work by histograms per letter in .available ? That's closer
 
-#%%
 
-testAnswer = "plage"
-w = copy.copy(a.currentWordList)
-while w:
-    trialWord = w.pop()
-    print(trialWord)
+# testAnswer = "plage"
+# w = copy.copy(a.currentWordList)
+# while w:
+#     trialWord = w.pop()
+#     print(trialWord)
 #%%
-b = newStandardBoard()
+b = newStandardBoard(printTheDiagnostics = 1)
 #%%
-b.playAutoGen(maxIterations=10)
+b.playAutoGen(maxIterations=6)
 #%%
 # Guess: AMIGO
 b.removeLetterAtLocation("a", 0)
