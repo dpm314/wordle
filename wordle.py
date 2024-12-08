@@ -31,6 +31,7 @@ class TXT_COLORS():
     pink = '\033[95m'
     lightcyan = '\033[96m'
     BOLD = '\033[1m'
+    DEFAULT = '\033[0m'
 
 # print(TXT_COLORS.BOLD, TXT_COLORS.green , "G", end = "")
 # print(TXT_COLORS.BOLD, TXT_COLORS.red , "R")
@@ -45,16 +46,16 @@ class TXT_COLORS():
 #print( "{}R{}Y{}G".format( TXT_COLORS.red, TXT_COLORS.yellow. TXT_COLORS.green ) ) #Doesnt work either ?!?!
 
 # ToDo: make these class/static variables of Guess class
-
-NOT       = 0
-SOMEWHERE = 1
-HERE      = 2
+_NOT       = 0
+_SOMEWHERE = 1
+_HERE      = 2
+_WON       = 2
 
 
 LETTER_COLOR_DICT = {
-    NOT       : TXT_COLORS.red    ,
-    SOMEWHERE : TXT_COLORS.orange ,
-    HERE      : TXT_COLORS.green
+    _NOT       : TXT_COLORS.red    + TXT_COLORS.BOLD,
+    _SOMEWHERE : TXT_COLORS.orange + TXT_COLORS.BOLD,
+    _HERE      : TXT_COLORS.green  + TXT_COLORS.BOLD
     }
 
 def readWordleWordSet(fileName = "wordleWordList.txt"):
@@ -96,19 +97,21 @@ class WordleBoard():
     def __init__(self, myLetters, 
                  words,
                  lineLength = 5,
-                 answer = None, 
-                 printNothing = False):
+                 answer = None,
+                 printNothing = False, 
+                 printTheDiagnostics = False):
 
-        self.printNothing = printNothing
-        self.lineLength = lineLength
+        self.printNothing     = printNothing
+        self.printTheDiagnostics = printTheDiagnostics
+        self.lineLength       = lineLength
         self.available = []
         self.guessList = []
-        self.WON = False
-        self.randomAnswer = False
+        self.boardIterations = 0
+        self.WON          = False
+
         self.currentWordList = copy.copy(words)
 
         if answer == None:
-            self.randomAnswer = True
             self.ANSWER = self._getRandomWord()
 
         else:
@@ -136,7 +139,7 @@ class WordleBoard():
             lettersToRemove = list( [lettersToRemove] )
             positions       = list( [positions]    )
         if not self.printNothing:
-            print("\t Removing Letters {} at locations {}".format(lettersToRemove, positions ))
+            print("\t\t Removing Letters {} at locations {}".format(lettersToRemove, positions ))
         
         for pos in positions:
             for l in lettersToRemove:
@@ -211,21 +214,21 @@ class WordleBoard():
                 toRemoveSet.add(word)
         
         self.currentWordList = self.currentWordList - toRemoveSet
-        if len(self.currentWordList) == 1:
-            self.WON = True
+        #if len(self.currentWordList) == 1:
+        #    self.WON == True
         return len(self.currentWordList)
 
     def printDiagnostics(self, printCurrentWordList = False):
         if not self.printNothing:
+            print( "Number of Iterations on Board {}"
+                  .format(self.boardIterations) )
             print( "Lenght of remaining word list: {}"
               .format (len(self.currentWordList)) )
+
         for _ in range(self.lineLength):
             if not self.printNothing:
                 print("Letters Available at Location {}: {}"
                   .format(_, self.available[_] ))
-        #if len(b.currentWordList) == 1:
-        #    if not self.printNothing:
-        #        print("YOU WIN! {}".format( self.currentWordList) )
 
         if printCurrentWordList:
             self.printCurrentWordListFancy()
@@ -233,16 +236,11 @@ class WordleBoard():
                 print( " -------------------------- ")
 
     def printCurrentWordListFancy(self):
-        if len(self.currentWordList) == 0: 
-            if not self.printNothing:
-                print("NO WORDS LEFT")
-
-        elif len(self.currentWordList) == 1:
-            if not self.printNothing:
+        if not self.printNothing:
+            if len(self.currentWordList) == 1:
                 print("ONLY WORD LEFT: {}".format(self.currentWordList) )
-            self.WON = True
-        else:
-            if not self.printNothing:
+                self.WON == True # Don't thing needed, but not hurting anything
+            else:
                 print ("Remaing Words: \n\t", '%s' % ', '
                    .join(map(str, self.currentWordList)))
 
@@ -268,9 +266,9 @@ class WordleBoard():
         # update Guess remaining word list length
         # update Guess remaining words ?
         # update Guess.setLetterStatus() per:
-            NOT       = 0
-            SOMEWHERE = 1
-            HERE      = 2
+            _NOT       = 0
+            _SOMEWHERE = 1
+            _HERE      = 2
         """
 
         if guessWord == None:
@@ -307,41 +305,49 @@ class WordleBoard():
                     self.mustHaveLetter(guessWord[i])
 
         #Store for future diagnostics etc:
+        
+        self.boardIterations += 1
         self.guessList.append( Guess(guessWord ))
-        
-        if self._checkWon() == True:
-            self.WON = True
+
+
+        self._checkWon()
+
+        if self.WON == True:
             self._printYouWon()
-        
+            
+        if self.printTheDiagnostics:
+            self.printDiagnostics()
+
     def _checkWon(self):
+
         if len(self.currentWordList) == 1:
-            self.WIN = True
-            self._printYouWon()
-        elif len(self.currentWordList) == 0:
-            print("ANSWER Not in Wordle Dictionary")
-            self.WIN = True # just to terminate iterations ? Dunno if needed or possible unless manuall entered guess word
+            self.WON = True
+        else:
+            self.WON = False #Probably unnecessary but for clarity
 
     def _printYouWon(self):
-        print("YOU WIN!: {} !".format(self.currentWordList))
+        if self.printNothing == False:
+            print(TXT_COLORS.BOLD + "\n YOU WIN!: {} \n".format( next(iter(self.currentWordList)).upper()) )
 
     def playAutoGen(self, maxIterations = 6):
-        for i in range(1, maxIterations):
+        iterCount = 0
+        while( (self.WON == False) and (iterCount < maxIterations) ):
+            iterCount += 1
             if not self.printNothing:
-                print("\n Iteration {}/{}".format(i, maxIterations ))
+                print("\n Iteration {}/{}".format(iterCount, maxIterations ))
 
             self.applyGuess()
-
-            if self.WON:
-                break
 
 #%%
 words = readWordleWordSet()
 letters =  list(map(chr, range(97,123))) #26 lower-case ASCII "a-z"
-b = WordleBoard(myLetters = letters, 
+b = WordleBoard(myLetters = letters,
               words = words,
-              answer='Slate')
+              printNothing = False,
+              printTheDiagnostics = False,
+              answer='amigo')
 #%%
-b.playAutoGen(maxIterations=6)
+b.playAutoGen(maxIterations=10)
 #%%
 #Guess: AMIGO
 b.removeLetterAtLocation('a',0)
@@ -396,30 +402,55 @@ b.playAutoGen(maxIterations=6)
 #%%
 startTime = time.time()
 
-itersReq = []
-maxIterations = 10
-for i in range(16):
+itersReq = boards = []
+maxIterations = 6
+numGames = 64
+for i in range(numGames):
     
     b = WordleBoard(myLetters = letters, 
                   words  = words,
-                  #answer ='slate',
+                  answer = None, #Choose randome guess word if None
+                  printTheDiagnostics=False,
                   printNothing = True)
 
     b.playAutoGen(maxIterations=maxIterations)
-    itersReq.append( len(b.guessList))
 
-print(time.time() - startTime)
-#%%
-iterHist = np.histogram( itersReq, range(1, maxIterations+1), density = True) #density normalizes correctly if each histogram bin same width
-print(iterHist)
-#%%
-plt.plot( iterHist[1][:-1], iterHist[0],marker = 'x', markersize = 20)
-plt.xlabel("Number of Iterations", fontsize = 20)
-plt.ylabel("Normalized Frequency to Win", fontsize = 20)
+    if b.WON:
+        print(LETTER_COLOR_DICT[2] + "answer: {} \t"
+              .format(b.ANSWER.upper( )), end = '')
+    else:
+        print(LETTER_COLOR_DICT[0] + "answer: {} \t"
+              .format(b.ANSWER.upper( )), end = '')
 
+    boards.append(b)
+
+endTime = time.time()
+print("\n" + TXT_COLORS.DEFAULT)
+
+gamesWon = sum( [1 for b in boards if b.WON] )
+
+print("\nWon: {}/{} {:.2f}% \t Elapsed Sec {:.3f} \t Effective Sec Per Iteration: {:.3f}"
+      .format( gamesWon,
+               numGames,
+               100.0 * float(gamesWon)/float(numGames),
+               endTime - startTime,
+               float( endTime - startTime) / float(numGames) )
+      )
+
+print("Using random guess word. single threaded")
+#%%
+# =============================================================================
+# iterHist = np.histogram( itersReq, range(1, maxIterations+1), density = True) #density normalizes correctly if each histogram bin same width
+# print(iterHist)
+# 
+# plt.plot( iterHist[1][:-1], iterHist[0],marker = 'x', markersize = 20)
+# plt.xlabel("Number of Iterations", fontsize = 20)
+# plt.ylabel("Normalized Frequency to Win", fontsize = 20)
+# 
 # TOdo: make lists of the histograms (maybe put in a class ?)
 # Label with answer or "Random" if b.randomAnswer == True"
 
+# =============================================================================
 
 
 
