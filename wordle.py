@@ -94,7 +94,7 @@ class Guess():
 
 class WordleBoard():
 
-    def __init__(self, myLetters, 
+    def __init__(self, letters, 
                  words,
                  lineLength = 5,
                  answer = None,
@@ -120,7 +120,7 @@ class WordleBoard():
         # WHY THIS DON'T WORK???:
         #    self.available = [copy.copy(myLetters)] * self.lineLength
         for _ in range(self.lineLength):
-            self.available.append( copy.copy(myLetters))
+            self.available.append( copy.copy(letters))
 
         if not self.printNothing:
             print("The ANSWER is: \t {} ".format(self.ANSWER) )
@@ -337,15 +337,56 @@ class WordleBoard():
                 print("\n Iteration {}/{}".format(iterCount, maxIterations ))
 
             self.applyGuess()
+##########
+### TODO: make letters and words (
+###       from reading file or nlp etc)
+###       either globals or class variables ?
+###       -> YES Want class variables, they are 
+###       not recomputed/loaded each instance
+##########
+def newStandardBoard(
+        printNothing = False,
+        printTheDiagnostics = False,
+        answer= None
+        ):
+
+    words = readWordleWordSet()
+    letters =  list(map(chr, range(97,123))) #26 lower-case ASCII "a-z"
+
+    board = WordleBoard(letters = letters,
+                  words = words,
+                  printNothing = printNothing,
+                  printTheDiagnostics = printTheDiagnostics,
+                  answer=answer)
+    return board
 
 #%%
-words = readWordleWordSet()
-letters =  list(map(chr, range(97,123))) #26 lower-case ASCII "a-z"
-b = WordleBoard(myLetters = letters,
-              words = words,
-              printNothing = False,
-              printTheDiagnostics = False,
-              answer='amigo')
+a = newStandardBoard( printNothing = False,
+                      printTheDiagnostics = False,
+                      answer='slate')
+a.printDiagnostics() # len currentWordList 12947
+
+#%%
+a.applyGuess('beard')
+a.printDiagnostics() # len currentWordList 99
+a.applyGuess('whale')
+a.printDiagnostics() # len currentWordList 99
+
+print("\n" + a.currentWordList)
+# Ideas: makye make a fake .applyGuess() which
+#   tries applying a guess to a copy.copy list of 
+#   .currentWordList and a.available then
+#   counts len(.currentWordList) for each and 
+#   returns the guess which shortens .currentWordList 
+#   the most ?
+
+
+
+
+
+
+#%%
+b = newStandardBoard()
 #%%
 b.playAutoGen(maxIterations=10)
 #%%
@@ -357,11 +398,6 @@ b.printDiagnostics()
 b.removeLettersAtLocations(['l', 'a']
     , [1,2])
 b.printDiagnostics()
-#%%
-
-
-
-
 
 #%%
 # NYT 11/4/2024
@@ -393,8 +429,9 @@ words = readWordleWordSet()
 letters =  list(map(chr, range(97,123))) #26 lower-case ASCII "a-z"
 b = WordleBoard(myLetters = letters, 
               words = words,
-              answer='vinyl')
+              answer='rerun')
 b.printDiagnostics()
+
 #%%
 b.playAutoGen(maxIterations=6)
 #%%
@@ -579,7 +616,7 @@ b.printDiagnostics(printCurrentWordList=True)
 allWords = nltk.corpus.words.words()
 words = getWordsOfLength(allWords, wordLength = 5)
 letters =  list(map(chr, range(97,123))) #26 lower-case ASCII "a-z"
-b = BoardLine(myLetters = letters, initialWordList = words)
+b = WordleBoard(myLetters = letters, initialWordList = words)
 b.printDiagnostics()
 #%%
 # From real guesses on 09/03/2024 NYT Wordle
