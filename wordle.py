@@ -820,7 +820,6 @@ LETTER_COLOR_DICT = {
     _HERE: TXT_COLORS.green + TXT_COLORS.BOLD,
 }
 
-
 def readWordleWordSet(fileName="wordleWordList.txt"):
     print("Reading words from {}".format(fileName))
     with open(fileName) as f:
@@ -831,6 +830,17 @@ def readWordleWordSet(fileName="wordleWordList.txt"):
 
 def getWordsOfLength(wordList, wordLength):
     return [str.lower(w) for w in wordList if len(w) == wordLength]
+
+def newStandardBoard(printNothing=False, 
+                     printTheDiagnostics=False, 
+                     answer=None):
+
+    board = WordleBoard(
+        printNothing=printNothing,
+        printTheDiagnostics=printTheDiagnostics,
+        answer=answer,
+    )
+    return board
 
 
 class Guess:
@@ -1085,10 +1095,8 @@ class WordleBoard:
             self.printDiagnostics(printCurrentWordList=True)
         self._checkWon()
 
-
         if self.WON == True:
             self._printYouWon()
-
 
     def _checkWon(self):
 
@@ -1112,7 +1120,6 @@ class WordleBoard:
                 print("\n Iteration {}/{}".format(iterCount, maxIterations))
             self.applyGuess()
 
-
 ##########
 ### TODO: make letters and words (
 ###       from reading file or nlp etc)
@@ -1134,24 +1141,14 @@ class WordleBoard:
 #     tryAllDict = {}
 
 
-def newStandardBoard(printNothing=False, printTheDiagnostics=False, answer=None):
-
-    # words = readWordleWordSet()
-    # letters =  list(map(chr, range(97,123))) #26 lower-case ASCII "a-z"
-
-    board = WordleBoard(
-        printNothing=printNothing,
-        printTheDiagnostics=printTheDiagnostics,
-        answer=answer,
-    )
-    return board
-
-
 #%%
-a = newStandardBoard(printNothing=False, printTheDiagnostics=False, answer="slate")
+a = newStandardBoard(printNothing=False, 
+                     printTheDiagnostics=True, 
+                     answer="slate")
 a.printDiagnostics()  # len currentWordList 12947
 
-#%%
+a.applyGuess()
+a.printDiagnostics()  # len currentWordList 99
 a.applyGuess()
 a.printDiagnostics()  # len currentWordList 99
 a.applyGuess()
