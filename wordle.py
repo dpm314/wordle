@@ -135,7 +135,9 @@ class WordleBoard:
 
     def removeLetterAtLocation(self, letterToRemove, position):
         if letterToRemove in self.available[position]:
-            self.available[position].remove(letterToRemove)
+            #self.available[position].remove(letterToRemove)
+            self.available[position] = [l.replace(letterToRemove, '-') 
+                                        for l in self.available[position] ]
         self._update()
 
     def removeLettersAtLocations(self, lettersToRemove, positions):
@@ -904,7 +906,9 @@ class WordleBoard:
 
     def removeLetterAtLocation(self, letterToRemove, position):
         if letterToRemove in self.available[position]:
-            self.available[position].remove(letterToRemove)
+            #self.available[position].remove(letterToRemove)
+            self.available[position] = [l.replace(letterToRemove, '-')
+                                        for l in self.available[position]]
         self._update()
 
     def removeLettersAtLocations(self, lettersToRemove, positions):
@@ -953,7 +957,8 @@ class WordleBoard:
         # self.removeLettersAtLocations([lettersToRemove]*L,          [list(range(L))] )
         for l in lettersToRemove:
             self.removeLettersAtLocations(
-                [l] * self.lineLength, list(range(self.lineLength))
+                [l] * self.lineLength,
+                list(range(self.lineLength))
             )
         self._update()
 
