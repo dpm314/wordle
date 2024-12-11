@@ -370,6 +370,22 @@ class WordleBoard:
 
 #     #for now just return a dictionary
 #     tryAllDict = {}
+
+#################################
+#%%
+# def targetFunc(x):
+#     return x+1
+
+# import multiprocessing
+# pool = multiprocessing.Pool(processes = 4)
+# #pool.map(targetFunc, listOfThingsToProcess)
+# results = pool.map(targetFunc, [1,2,3,4,5,6,7,8])
+# # also look at pool.imap()  !!!!!!!!!!!!!!!!!!!!!!!!
+# print(results)
+#%%
+
+
+
 #%%
 b = newStandardBoard(printTheDiagnostics = 1)
 b.playAutoGen(maxIterations=6)
