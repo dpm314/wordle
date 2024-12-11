@@ -381,6 +381,7 @@ class WordleBoard:
 # #pool.map(targetFunc, listOfThingsToProcess)
 # results = pool.map(targetFunc, [1,2,3,4,5,6,7,8])
 # # also look at pool.imap()  !!!!!!!!!!!!!!!!!!!!!!!!
+# # and imap_unordered()
 # print(results)
 #%%
 
