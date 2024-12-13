@@ -6,8 +6,7 @@ Created on Fri Dec 15 20:41:12 2023
 
 import matplotlib.pyplot as plt
 import numpy as np
-
-# import re as re
+import multiprocessing as mp
 
 import nltk
 import copy
@@ -63,7 +62,7 @@ LETTER_COLOR_DICT = {
 
 
 def readWordleWordSet(fileName="wordleWordList.txt"):
-    print("Reading words from {}".format(fileName))
+    #print("Reading words from {}".format(fileName))
     with open(fileName) as f:
         lines = f.read().splitlines()
         lines = set(lines)
@@ -73,7 +72,7 @@ def readWordleWordSet(fileName="wordleWordList.txt"):
 def getWordsOfLength(wordList, wordLength):
     return [str.lower(w) for w in wordList if len(w) == wordLength]
 
-def newStandardBoard(printNothing=False, printTheDiagnostics=False, answer=None):
+def newStandardBoard(printNothing=False, printTheDiagnostics=False, answer=None, maxIterations = 6):
 
     # words = readWordleWordSet()
     # letters =  list(map(chr, range(97,123))) #26 lower-case ASCII "a-z"
@@ -82,19 +81,17 @@ def newStandardBoard(printNothing=False, printTheDiagnostics=False, answer=None)
         printNothing=printNothing,
         printTheDiagnostics=printTheDiagnostics,
         answer=answer,
+        maxIterations=maxIterations
     )
     return board
 
 class Guess:
     def __init__(self, guessText=""):
         self.text = guessText
-<<<<<<< HEAD
         self.printText        = ""
         self.letterStatus = [""]*len(self.text)
-=======
         self.printText = ""
         self.letterStatus = []
->>>>>>> 279a9d36e031351f379b2a3fd38ee731b2cf1a7d
         self.setText(guessText)
 
     def setText(self, text):
@@ -109,27 +106,36 @@ class Guess:
 
         pstr = TXT_COLORS.BOLD + ""
         for i in range(len(self.text)):
-<<<<<<< HEAD
+
             # ERROR HERE
             # ERROR HERE
             # ERROR HERE
             pstr += LETTER_COLOR_DICT[ self.letterStatus[i] ] + " "
             + self.text[i].upper()
-=======
+
             pstr += LETTER_COLOR_DICT[self.letterStatus[i]] + " "
-            +self.text[i].upper()
->>>>>>> 279a9d36e031351f379b2a3fd38ee731b2cf1a7d
+            + self.text[i].upper()
         return pstr
 
 
 class WordleBoard:
 
-    _words = readWordleWordSet()
-    _letters = list(map(chr, range(97, 123)))  # 26 lower-case ASCII "a-z"
+    # _words = readWordleWordSet()
+    # _letters = list(map(chr, range(97, 123)))  # 26 lower-case ASCII "a-z"
 
     def __init__(
-        self, lineLength=5, answer=None, printNothing=False, printTheDiagnostics=False
+        self, lineLength=5,
+        answer=None, 
+        printNothing=False,
+        printTheDiagnostics=False,
+        maxIterations = 6
     ):
+
+        # Used to be class level variables, getting screwed up with multiprocessing ? 
+        self._words = readWordleWordSet()
+        self._letters = list(map(chr, range(97, 123)))  # 26 lower-case ASCII "a-z"
+
+        self.maxIterations = maxIterations
 
         self.printNothing = printNothing
         self.printTheDiagnostics = printTheDiagnostics
@@ -149,8 +155,8 @@ class WordleBoard:
         #    self.available = [copy.copy(myLetters)] * self.lineLength
         for _ in range(self.lineLength):
             self.available.append(copy.copy(self._letters))
-        if not self.printNothing:
-            print("The ANSWER is: \t {} ".format(self.ANSWER))
+        # if not self.printNothing:
+        #     print("The ANSWER is: \t {} ".format(self.ANSWER))
 
     def _getRandomWord(self):
         return random.choice(list(self.currentWordList))
@@ -192,11 +198,7 @@ class WordleBoard:
     def removeLettersEverywhere(self, lettersToRemove):
         if not self.printNothing:
             print("\t Removing Letters Everywhere {}".format(lettersToRemove))
-        # for position_ in range(len(self.available)):
-        # for letterToRemove in list(lettersToRemove)[:]
 
-        # print(" removing {} | from {} ".format([lettersToRemove]*L, [list(range(L)]) )
-        # self.removeLettersAtLocations([lettersToRemove]*L,          [list(range(L))] )
         for l in lettersToRemove:
             self.removeLettersAtLocations(
                 [l] * self.lineLength, list(range(self.lineLength))
@@ -300,16 +302,6 @@ class WordleBoard:
             guessWord = self._getRandomWord()  # from current word list
         guessWord = guessWord.lower()  # incase user enters with any capital letters
 
-        # =============================================================================
-        # TODO move to get word function in a interactive play implementation;
-        #      not needed for auto guessing
-        # =============================================
-        #         if len(guessWord) != self.lineLength:
-        #             if not self.printNothing:
-        #                 print( "ERROR: guess not same length as answer")
-        #             return
-        # =============================================================================
-
         if not self.printNothing:
             print("*Applying guess word: \t {}".format(guessWord))
         # Check letter not anywhere:
@@ -324,7 +316,6 @@ class WordleBoard:
         for i in range(self.lineLength):
             if guessWord[i] in self.ANSWER:
                 if guessWord[i] is not self.ANSWER[i]:
-                    # print("i = ", i, ' if guessWord[i] in self.ANSWER and guessWord[i] is not self.ANSWER[i]')
                     # guessWord letter is in the word but not here (at location i)
                     self.removeLetterAtLocation(guessWord[i], i)
                     self.mustHaveLetter(guessWord[i])
@@ -343,10 +334,10 @@ class WordleBoard:
 
     def _checkWon(self):
 
+        self.WON = False  # Probably unnecessary but for clarity
         if len(self.currentWordList) == 1:
-            self.WON = True
-        else:
-            self.WON = False  # Probably unnecessary but for clarity
+            if next(iter(self.currentWordList)) == self.ANSWER:
+                self.WON = True
 
     def _printYouWon(self):
         if self.printNothing == False:
@@ -357,12 +348,11 @@ class WordleBoard:
 
     def playAutoGen(self, maxIterations=6):
         iterCount = 0
-        while (self.WON == False) and (iterCount < maxIterations):
+        while (self.WON == False) and (self.boardIterations < maxIterations):
             iterCount += 1
             if not self.printNothing:
                 print("\n Iteration {}/{}".format(iterCount, maxIterations))
             self.applyGuess()
-
 
 ##########
 ### TODO: make letters and words (
@@ -401,8 +391,8 @@ class WordleBoard:
 
 
 #%%
-b = newStandardBoard(printTheDiagnostics = 1)
-b.playAutoGen(maxIterations=6)
+b = newStandardBoard(printTheDiagnostics = True, answer = 'slate')
+b.playAutoGen(maxIterations=3)
 
 #%%
 a = newStandardBoard(printNothing=False, 
@@ -419,82 +409,92 @@ a.applyGuess()
 #   the most ?
 
 # maybe work by histograms per letter in .available ? That's closer
+#%%
 
+def chomper(boardSlice):
+    #[b.playAutoGen() for b in boardSlice]
+    for b in boardSlice:
+        b.playAutoGen(maxIterations=maxIterations)
+    return boardSlice
 
+itersReq = []
+maxIterations = 6
+numGames = 256
+numPools = 8
+numBoardsPerPool = int( numGames / numPools )
+
+pool = mp.Pool()
+
+allBoards = [ newStandardBoard(printNothing=True,
+                    printTheDiagnostics=True,
+                    maxIterations = maxIterations,
+                    answer= None)
+                    for _ in range(0,numGames) ]
+allBoards = [ allBoards[i:(i+numBoardsPerPool)] for i in range(0,numGames,numBoardsPerPool) ]
+
+startTime = time.time()
+
+allBoards = pool.map(chomper, allBoards)
+
+numWins  = sum( list( sum( [ allBoards[si][i].WON for i in range(0,len(allBoards[si] )) ]) for si in range(len(allBoards))  ))
+fracWins = float(numWins) / float(numGames)
+
+for i in range(0,len(allBoards)):
+    print('Thread {}: ---'.format(i))
+    for j in range(len( allBoards[i]) ):
+        print( "{} \t {} \t {} \t WIN: {}".format(allBoards[i][j].ANSWER, len(allBoards[i][j].guessList), len(allBoards[i][j].currentWordList), allBoards[i][j].WON) )
+
+print("Total Time: {}\tPer Iteration\t{}".format( (time.time() - startTime), (time.time() - startTime) / float(numGames)) )
+print(" Win {}/{} \t {} %".format(numWins,numGames, fracWins) )
 
 #%%
 startTime = time.time()
 
-<<<<<<< HEAD
+
 itersReq = []
-maxIterations = 10
-for i in range(1024):
-    
-    b = WordleBoard(myLetters = letters, 
-                  words  = words,
-                  answer = None,
-                  #answer ='slate',
-                  printNothing = True)
-=======
-itersReq = boards = []
 maxIterations = 6
 numGames = 64
+
 for i in range(numGames):
->>>>>>> 279a9d36e031351f379b2a3fd38ee731b2cf1a7d
+    print("Game #{} / {}".format(i, numGames))
+    b = newStandardBoard(
+                  answer = None,
+                  printTheDiagnostics=True,
+                  printNothing = True)
+    b.playAutoGen()
+    itersReq.append( b.boardIterations )
 
-    b = WordleBoard(
-        answer=None,  # Choose randome guess word if None
-        printTheDiagnostics=False,
-        printNothing=True,
-    )
 
-<<<<<<< HEAD
-print(time.time() - startTime)
+print("Total Time: {}\tPer Iteration{}".format( (time.time() - startTime), (time.time() - startTime) / float(numGames)) )
+print(" Win {}/{} \t {}\%".format(numWins,numGames), fracWins)
 #%%
-iterHist = np.histogram( itersReq, range(1, maxIterations+1), density = True) #density normalizes correctly if each histogram bin same width
+iterHist = np.histogram( itersReq, bins = [0,1,2,3,4,5,6,7], density = True ) #density normalizes correctly if each histogram bin same width
 print(iterHist)
 
-plt.plot( iterHist[1][:-1], iterHist[0],marker = 'x', markersize = 20)
-plt.xlabel("Number of Iterations", fontsize = 20)
-plt.ylabel("Normalized Frequency to Win", fontsize = 20)
-plt.plot([6,6], [0, np.max(iterHist[0]) ], 'r')
-=======
-    b.playAutoGen(maxIterations=maxIterations)
-    boards.append(b)
+plt.figure()
+plt.plot( range(0, len(iterHist[0]) ) , iterHist[0] , marker = 'o', markersize = 30)
+plt.plot( range(0, len(iterHist[0]) ) , iterHist[0] , linewidth = 10)
+plt.xlabel("Number of Iterations", fontsize = 26)
+plt.xticks(range(0, numGames), fontsize = 26)
+plt.ylabel("Normalized Frequency to Win", fontsize = 26)
+plt.xticks(fontsize = 26)
+plt.yticks(fontsize = 26)
+plt.plot([maxIterations, maxIterations], [0,1 ], 'r')
+plt.grid()
+plt.tight_layout()
 
-    if b.WON:
-        print(LETTER_COLOR_DICT[2] + "{} ".format(b.ANSWER.upper()), end="")
-    else:
-        print(LETTER_COLOR_DICT[0] + "{} ".format(b.ANSWER.upper()), end="")
-endTime = time.time()
-print("\n" + TXT_COLORS.DEFAULT)
-
-gamesWon = sum([1 for b in boards if b.WON])
-
-print(
-    "\nWon: {}/{} {:.2f}% \t Elapsed Sec {:.3f} \t Effective Sec Per Iteration: {:.3f}".format(
-        gamesWon,
-        numGames,
-        100.0 * float(gamesWon) / float(numGames),
-        endTime - startTime,
-        float(endTime - startTime) / float(numGames),
-    )
-)
-
-print("Using random guess word. single threaded")
 #%%
-# =============================================================================
-# iterHist = np.histogram( itersReq, range(1, maxIterations+1), density = True) #density normalizes correctly if each histogram bin same width
-# print(iterHist)
-#
-# plt.plot( iterHist[1][:-1], iterHist[0],marker = 'x', markersize = 20)
-# plt.xlabel("Number of Iterations", fontsize = 20)
-# plt.ylabel("Normalized Frequency to Win", fontsize = 20)
-#
->>>>>>> 279a9d36e031351f379b2a3fd38ee731b2cf1a7d
-# TOdo: make lists of the histograms (maybe put in a class ?)
-# Label with answer or "Random" if b.randomAnswer == True"
 
+
+
+
+
+
+
+
+
+
+#%%
 # =============================================================================
 
 
