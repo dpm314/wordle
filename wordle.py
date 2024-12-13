@@ -72,7 +72,7 @@ class Guess():
     def __init__(self, guessText = ""):
         self.text = guessText
         self.printText        = ""
-        self.letterStatus = []
+        self.letterStatus = [""]*len(self.text)
         self.setText(guessText)
 
     def setText(self, text):
@@ -87,7 +87,11 @@ class Guess():
 
         pstr = TXT_COLORS.BOLD + ""
         for i in range(len(self.text)):
-            pstr += LETTER_COLOR_DICT[ self.letterStatus[i] ] + " " + self.text[i].upper()
+            # ERROR HERE
+            # ERROR HERE
+            # ERROR HERE
+            pstr += LETTER_COLOR_DICT[ self.letterStatus[i] ] + " "
+            + self.text[i].upper()
         return pstr
 
 class WordleBoard():
@@ -412,10 +416,11 @@ startTime = time.time()
 
 itersReq = []
 maxIterations = 10
-for i in range(16):
+for i in range(1024):
     
     b = WordleBoard(myLetters = letters, 
                   words  = words,
+                  answer = None,
                   #answer ='slate',
                   printNothing = True)
 
@@ -426,11 +431,11 @@ print(time.time() - startTime)
 #%%
 iterHist = np.histogram( itersReq, range(1, maxIterations+1), density = True) #density normalizes correctly if each histogram bin same width
 print(iterHist)
-#%%
+
 plt.plot( iterHist[1][:-1], iterHist[0],marker = 'x', markersize = 20)
 plt.xlabel("Number of Iterations", fontsize = 20)
 plt.ylabel("Normalized Frequency to Win", fontsize = 20)
-
+plt.plot([6,6], [0, np.max(iterHist[0]) ], 'r')
 # TOdo: make lists of the histograms (maybe put in a class ?)
 # Label with answer or "Random" if b.randomAnswer == True"
 
