@@ -415,11 +415,12 @@ def chomper(boardSlice):
     #[b.playAutoGen() for b in boardSlice]
     for b in boardSlice:
         b.playAutoGen(maxIterations=maxIterations)
+    #return boardSlice
     return boardSlice
 
 itersReq = []
 maxIterations = 6
-numGames = 256
+numGames = 4096
 numPools = 8
 numBoardsPerPool = int( numGames / numPools )
 
@@ -445,7 +446,7 @@ for i in range(0,len(allBoards)):
         print( "{} \t {} \t {} \t WIN: {}".format(allBoards[i][j].ANSWER, len(allBoards[i][j].guessList), len(allBoards[i][j].currentWordList), allBoards[i][j].WON) )
 
 print("Total Time: {}\tPer Iteration\t{}".format( (time.time() - startTime), (time.time() - startTime) / float(numGames)) )
-print(" Win {}/{} \t {} %".format(numWins,numGames, fracWins) )
+print("Win {}/{} \t {} %".format(numWins,numGames, fracWins) )
 
 #%%
 startTime = time.time()
