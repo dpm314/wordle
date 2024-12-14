@@ -62,7 +62,7 @@ LETTER_COLOR_DICT = {
 
 
 def readWordleWordSet(fileName="wordleWordList.txt"):
-    #print("Reading words from {}".format(fileName))
+    print("Reading words from {}".format(fileName))
     with open(fileName) as f:
         lines = f.read().splitlines()
         lines = set(lines)
@@ -86,42 +86,17 @@ def newStandardBoard(printNothing=False, printTheDiagnostics=False, answer=None,
     return board
 
 class Guess:
-    def __init__(self, guessText=""):
-        self.text = guessText
-        self.printText        = ""
-        self.letterStatus = [""]*len(self.text)
-        self.printText = ""
-        self.letterStatus = []
-        self.setText(guessText)
+    def __init__(self, guessWord = '', guessText=''):
+        self.guessWord = guessWord
+        self.guessText = guessText
 
-    def setText(self, text):
-        self.text = text
-
-    def setLetterStatus(self, letterStatusList):
-        self.letterStatus = letterStatusList
-
-    def _genPrintText(self):
-        # if len(self.text) == 0:
-        #    return ""
-
-        pstr = TXT_COLORS.BOLD + ""
-        for i in range(len(self.text)):
-
-            # ERROR HERE
-            # ERROR HERE
-            # ERROR HERE
-            pstr += LETTER_COLOR_DICT[ self.letterStatus[i] ] + " "
-            + self.text[i].upper()
-
-            pstr += LETTER_COLOR_DICT[self.letterStatus[i]] + " "
-            + self.text[i].upper()
-        return pstr
-
+    def printMe(self):
+        print(self.guessText)
 
 class WordleBoard:
 
-    # _words = readWordleWordSet()
-    # _letters = list(map(chr, range(97, 123)))  # 26 lower-case ASCII "a-z"
+    _words = readWordleWordSet()
+    _letters = list(map(chr, range(97, 123)))  # 26 lower-case ASCII "a-z"
 
     def __init__(
         self, lineLength=5,
@@ -132,8 +107,8 @@ class WordleBoard:
     ):
 
         # Used to be class level variables, getting screwed up with multiprocessing ? 
-        self._words = readWordleWordSet()
-        self._letters = list(map(chr, range(97, 123)))  # 26 lower-case ASCII "a-z"
+        #._words = readWordleWordSet()
+        #self._letters = list(map(chr, range(97, 123)))  # 26 lower-case ASCII "a-z"
 
         self.maxIterations = maxIterations
 
@@ -297,32 +272,40 @@ class WordleBoard:
             _SOMEWHERE = 1
             _HERE      = 2
         """
-
+        guessText = ''
+        
         if guessWord == None:
             guessWord = self._getRandomWord()  # from current word list
         guessWord = guessWord.lower()  # incase user enters with any capital letters
 
         if not self.printNothing:
             print("*Applying guess word: \t {}".format(guessWord))
-        # Check letter not anywhere:
-        for l in guessWord:
-            if l not in self.ANSWER:
-                self.removeLettersEverywhere(l)
-        # Check letter is here
+        ## Check letter not anywhere:
+        #for l in guessWord:
+        #    if l not in self.ANSWER:
+        #        self.removeLettersEverywhere(l)
+        
+
+
         for i in range(self.lineLength):
+            if guessWord[i] not in self.ANSWER:
+                self.removeLettersEverywhere(guessWord[i])
+                guessText += LETTER_COLOR_DICT[_NOT] + guessWord[i].upper()
+                
             if guessWord[i] == self.ANSWER[i]:
                 self.setOnlyLetter(guessWord[i], i)
+                guessText += LETTER_COLOR_DICT[_HERE]+ guessWord[i].upper()
         # Check letter is somewhere but not here:
-        for i in range(self.lineLength):
             if guessWord[i] in self.ANSWER:
                 if guessWord[i] is not self.ANSWER[i]:
                     # guessWord letter is in the word but not here (at location i)
                     self.removeLetterAtLocation(guessWord[i], i)
                     self.mustHaveLetter(guessWord[i])
+                    guessText += LETTER_COLOR_DICT[_SOMEWHERE]+ guessWord[i].upper()
         # Store for future diagnostics etc:
 
         self.boardIterations += 1
-        self.guessList.append(Guess(guessWord))
+        self.guessList.append(Guess(guessWord, guessText))
 
         self._checkWon()
 
@@ -391,8 +374,13 @@ class WordleBoard:
 
 
 #%%
-b = newStandardBoard(printTheDiagnostics = True, answer = 'slate')
-b.playAutoGen(maxIterations=3)
+b = newStandardBoard(printTheDiagnostics = True, answer = 'vying')
+b.playAutoGen(maxIterations=6)
+
+#%%
+for g in b.guessList:
+    g.printMe()
+    
 
 #%%
 a = newStandardBoard(printNothing=False, 
@@ -420,7 +408,7 @@ def chomper(boardSlice):
 
 itersReq = []
 maxIterations = 6
-numGames = 4096
+numGames = 256
 numPools = 8
 numBoardsPerPool = int( numGames / numPools )
 
