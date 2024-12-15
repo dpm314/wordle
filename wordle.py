@@ -83,17 +83,11 @@ def newStandardBoard(printNothing=False, printTheDiagnostics=False, answer=None,
         answer=answer,
         maxIterations=maxIterations
     )
+    
+    if printTheDiagnostics:
+        print("---------------------------------------------------------")
+        print("The ANSWER is: {}".format(board.ANSWER))
     return board
-
-class Guess:
-    def __init__(self, guessWord = '', guessText='', boardMapText = ''):
-        self.guessWord = guessWord
-        self.guessText = guessText
-        self.boardMapText = copy.copy( boardMapText )
-
-    def printMe(self):
-        print(self.guessText + " " + TXT_COLORS.DEFAULT)
-        print(self.boardMapText)
 
 class WordleBoard:
 
@@ -125,7 +119,7 @@ class WordleBoard:
 
         self.currentWordList = copy.copy(self._words)
 
-        if answer == None:
+        if (answer == None) or (answer == ""):
             self.ANSWER = self._getRandomWord()
         else:
             self.ANSWER = answer.lower()
@@ -231,8 +225,8 @@ class WordleBoard:
 
     def printDiagnostics(self, printCurrentWordList=False):
         if not self.printNothing:
-            print("Number of Iterations on Board {}".format(self.boardIterations))
-            print("Lenght of remaining word list: {}".format(len(self.currentWordList)))
+            print("Number of iterations on board: \t {}".format(self.boardIterations))
+            print("Lenght of remaining word list: \t {}".format(len(self.currentWordList)))
 
         if printCurrentWordList:
             self.printCurrentWordListFancy()
@@ -260,11 +254,14 @@ class WordleBoard:
 
     def applyGuess(self, guessWord=None):
         """
+            _NOT       = 0
+            _SOMEWHERE = 1
+            _HERE      = 2
+
         # THREE guess cases against self.ANSWER:
 
         # Letter not anywhere
             # remove letter everywhere
-            # set letter status NOT
 
         # Letter is here
             # set onlyLetter
@@ -273,13 +270,6 @@ class WordleBoard:
         # Letter is somewhere
             # remove at current location
             # apply mustHaveLetter somewhere
-
-        # update Guess remaining word list length
-        # update Guess remaining words ?
-        # update Guess.setLetterStatus() per:
-            _NOT       = 0
-            _SOMEWHERE = 1
-            _HERE      = 2
         """
         guessText = ''
         boardMap  = ''
@@ -312,8 +302,9 @@ class WordleBoard:
 
         self.boardIterations += 1
         mapStr = self.genBoardMapStr()
+        
         self.guessList.append(
-            Guess(guessWord, guessText, boardMapText = mapStr )
+            Guess( )
             )
 
         self._checkWon()
@@ -346,9 +337,36 @@ class WordleBoard:
                 print("\n Iteration {}/{}".format(iterCount, maxIterations))
             self.applyGuess()
 
+    # def printAnswer(self):
+    #     print("printAnswer !!!")
+    #     print("\{}\ \n".format(self.ANSWER) )
+
+class Guess(WordleBoard):
+    def __init__(self, guessWord = '', guessText='', boardMapText = ''):
+        #super().__init__()
+        #self.guessWord = guessWord
+        #self.guessText = guessText
+        #self.boardMapText = copy.copy( boardMapText )
+        
+
+        #print(self.ANSWER)
+        print(super().ANSWER)
+
+        #self.text = "from Guess().__init__(): {}".format(
+            #self.ANSWER    )
+            #super().ANSWER )
+
+        #print(self.text)
+        #self.remainingWords    = copy.copy( super().currentWordList )
+        #self.remainingWordsLen = len(self.remainingWords)
+
+    def printMe(self):
+        #print(self.guessText + " " + TXT_COLORS.DEFAULT)
+        #print(self.boardMapText)
+        print("Num Remaining Words: {}".format(self.len(currentWordList)))
 
 #%%
-b = newStandardBoard(printTheDiagnostics = False, answer = 'vying')
+b = newStandardBoard(printTheDiagnostics = True, answer = None)
 b.playAutoGen(maxIterations=6)
 
 #%%
