@@ -374,8 +374,28 @@ for g in b.guessList:
     g.printMe()
 for g in b.guessList:
     print( print(g.guessText) )
-    
+#%%
 
+# super() testing:
+class Parent:
+    def __init__(self,name='Jack'):
+        self.name = name
+
+class Printer(Parent):
+    def __init__(self):
+        super().__init__()
+        self.printerName = super().name
+    def printName(self):
+        print("Printer.printName() self.name : \t {}".format( self.name ))
+        print("self.printerName : \t {}".format( self.printerName ))
+
+
+
+#%%
+p = Parent()
+p.printName()
+#%%
+pr = Printer(p)
 #%%
 a = newStandardBoard(printNothing=False, 
                      printTheDiagnostics=True,
