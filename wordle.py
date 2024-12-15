@@ -86,12 +86,14 @@ def newStandardBoard(printNothing=False, printTheDiagnostics=False, answer=None,
     return board
 
 class Guess:
-    def __init__(self, guessWord = '', guessText=''):
+    def __init__(self, guessWord = '', guessText='', boardMapText = ''):
         self.guessWord = guessWord
         self.guessText = guessText
+        self.boardMapText = copy.copy( boardMapText )
 
     def printMe(self):
-        print(self.guessText)
+        print(self.guessText + " " + TXT_COLORS.DEFAULT)
+        print(self.boardMapText)
 
 class WordleBoard:
 
@@ -117,6 +119,7 @@ class WordleBoard:
         self.lineLength = lineLength
         self.available = []
         self.guessList = []
+        self.boardMaps = []
         self.boardIterations = 0
         self.WON = False
 
@@ -149,9 +152,7 @@ class WordleBoard:
             positions = list([positions])
         if not self.printNothing:
             print(
-                "\t\t Removing Letters {} at locations {}".format(
-                    lettersToRemove, positions
-                )
+                "Removing Letters {}".format( lettersToRemove )
             )
         for pos in positions:
             for l in lettersToRemove:
@@ -172,7 +173,7 @@ class WordleBoard:
 
     def removeLettersEverywhere(self, lettersToRemove):
         if not self.printNothing:
-            print("\t Removing Letters Everywhere {}".format(lettersToRemove))
+            print("Removing Letters Everywhere {}".format(lettersToRemove))
 
         for l in lettersToRemove:
             self.removeLettersAtLocations(
@@ -184,7 +185,7 @@ class WordleBoard:
         # likely lettersToSet is length 1, ie when we know a certain letter at a specific location
         if not self.printNothing:
             print(
-                "\t Setting Letter to Only {} at locations {}".format(
+                "Setting Letter to Only {} at locations {}".format(
                     letterToSet, position
                 )
             )
@@ -222,19 +223,27 @@ class WordleBoard:
         #    self.WON == True
         return len(self.currentWordList)
 
-    def printDiagnostics(self, printCurrentWordList=True):
+    def genBoardMapStr(self):
+        text = ""
+        for _ in range(self.lineLength):
+            text += "Available at Location {}:\t".format(_) + "".join(self.available[_]) +"\n"
+        return text
+
+    def printDiagnostics(self, printCurrentWordList=False):
         if not self.printNothing:
             print("Number of Iterations on Board {}".format(self.boardIterations))
             print("Lenght of remaining word list: {}".format(len(self.currentWordList)))
-        for _ in range(self.lineLength):
-            if not self.printNothing:
-                print(
-                    "Available at Location {}:\t".format(_) + "".join(self.available[_])
-                )
+
         if printCurrentWordList:
             self.printCurrentWordListFancy()
             if not self.printNothing:
                 print(" -------------------------- ")
+
+    def printFinalSummary(self, tailText=""):
+        print("---------------------------------")
+        for g in self.guessList():
+            print("---------------------------------")
+            g.printMe()
 
     def printCurrentWordListFancy(self):
         if not self.printNothing:
@@ -251,7 +260,7 @@ class WordleBoard:
 
     def applyGuess(self, guessWord=None):
         """
-        # THREE guess CASES against self.ANSWER:
+        # THREE guess cases against self.ANSWER:
 
         # Letter not anywhere
             # remove letter everywhere
@@ -273,6 +282,7 @@ class WordleBoard:
             _HERE      = 2
         """
         guessText = ''
+        boardMap  = ''
         
         if guessWord == None:
             guessWord = self._getRandomWord()  # from current word list
@@ -280,18 +290,11 @@ class WordleBoard:
 
         if not self.printNothing:
             print("*Applying guess word: \t {}".format(guessWord))
-        ## Check letter not anywhere:
-        #for l in guessWord:
-        #    if l not in self.ANSWER:
-        #        self.removeLettersEverywhere(l)
-        
-
 
         for i in range(self.lineLength):
             if guessWord[i] not in self.ANSWER:
                 self.removeLettersEverywhere(guessWord[i])
                 guessText += LETTER_COLOR_DICT[_NOT] + guessWord[i].upper()
-                
             if guessWord[i] == self.ANSWER[i]:
                 self.setOnlyLetter(guessWord[i], i)
                 guessText += LETTER_COLOR_DICT[_HERE]+ guessWord[i].upper()
@@ -304,8 +307,14 @@ class WordleBoard:
                     guessText += LETTER_COLOR_DICT[_SOMEWHERE]+ guessWord[i].upper()
         # Store for future diagnostics etc:
 
+        #guessText += "\n"
+        self.boardMaps.append( self.genBoardMapStr() )
+
         self.boardIterations += 1
-        self.guessList.append(Guess(guessWord, guessText))
+        mapStr = self.genBoardMapStr()
+        self.guessList.append(
+            Guess(guessWord, guessText, boardMapText = mapStr )
+            )
 
         self._checkWon()
 
@@ -324,9 +333,9 @@ class WordleBoard:
 
     def _printYouWon(self):
         if self.printNothing == False:
-            print(
-                TXT_COLORS.BOLD
-                + "\n YOU WIN!: {} \n".format(next(iter(self.currentWordList)).upper())
+            print( TXT_COLORS.BOLD
+                   + "\n YOU WIN!: {} \n"
+                  .format(next(iter(self.currentWordList)).upper())
             )
 
     def playAutoGen(self, maxIterations=6):
@@ -337,49 +346,16 @@ class WordleBoard:
                 print("\n Iteration {}/{}".format(iterCount, maxIterations))
             self.applyGuess()
 
-##########
-### TODO: make letters and words (
-###       from reading file or nlp etc)
-###       either globals or class variables ?
-###       -> YES Want class variables, they are
-###       not recomputed/loaded each instance
-##########
-# #
-# #
-# # FOR TESTING ONLY (?)
-# #
-# #
-# # ACTUALLY can only use .available here not .ANSWER ?
-# def __tryAllWords(self):
-#     #returns heap queue with key as the word and value as length of remaingin wordlist if we chose the key word
-#     #https://www.google.com/search?q=python+create+priority+queue+fromo+keys+in+dictionary+pythony+%3F&oq=python+create+priority+queue+fromo+keys+in+dictionary+pythony+%3F&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCTE3OTIzajBqN6gCCLACAQ&client=ubuntu-chr&sourceid=chrome&ie=UTF-8
-
-#     #for now just return a dictionary
-#     tryAllDict = {}
-
-#################################
-#%%
-# def targetFunc(x):
-#     return x+1
-
-# import multiprocessing
-# pool = multiprocessing.Pool(processes = 4)
-# #pool.map(targetFunc, listOfThingsToProcess)
-# results = pool.map(targetFunc, [1,2,3,4,5,6,7,8])
-# # also look at pool.imap()  !!!!!!!!!!!!!!!!!!!!!!!!
-# # and imap_unordered()
-# print(results)
-#%%
-
-
 
 #%%
-b = newStandardBoard(printTheDiagnostics = True, answer = 'vying')
+b = newStandardBoard(printTheDiagnostics = False, answer = 'vying')
 b.playAutoGen(maxIterations=6)
 
 #%%
 for g in b.guessList:
     g.printMe()
+for g in b.guessList:
+    print( print(g.guessText) )
     
 
 #%%
