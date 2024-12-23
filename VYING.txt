@@ -1,0 +1,97 @@
+Iteration 1/6
+*Applying guess word: 	 dicer
+	 Removing Letters Everywhere d
+		 Removing Letters ['d', 'd', 'd', 'd', 'd'] at locations [0, 1, 2, 3, 4]
+	 Removing Letters Everywhere c
+		 Removing Letters ['c', 'c', 'c', 'c', 'c'] at locations [0, 1, 2, 3, 4]
+	 Removing Letters Everywhere e
+		 Removing Letters ['e', 'e', 'e', 'e', 'e'] at locations [0, 1, 2, 3, 4]
+	 Removing Letters Everywhere r
+		 Removing Letters ['r', 'r', 'r', 'r', 'r'] at locations [0, 1, 2, 3, 4]
+Number of Iterations on Board 1
+Lenght of remaining word list: 718
+Available at Location 0:	ab---fghijklmnopq-stuvwxyz
+Available at Location 1:	ab---fgh-jklmnopq-stuvwxyz
+Available at Location 2:	ab---fghijklmnopq-stuvwxyz
+Available at Location 3:	ab---fghijklmnopq-stuvwxyz
+Available at Location 4:	ab---fghijklmnopq-stuvwxyz
+Remaing Words: 
+	
+potin flits skiff paint ulmin squit agami quips avion kutis wuxia ships salmi atigi swith taxis slipt gaitt munis absit pling imshy taiko faint spait suing skimo aguti mooli thill flimp imply tulsi umiak haily axial agism flisk nazis axion zatis posit psoai lanai waits sabin split haika kufis fasti buiks aping soily tupik sybil kamik gopik inust baith kails ikats pails sains twist inbox ossia swizz askoi hokis inwit kalif spilt spits quipu waifs toing slily muils pupil ingot makis thins whizz kumis glims gummi sniff bhais oasis vomit plims intis shins amiss basil unpin tyiyn whims lapis moist swing tamis malis axiom agios shiai pulli phizz joist topoi thiol knish saiga infix skint squiz mails waift tuism obias khazi noily uplit allis gaita joint walis infos smaik apsis lathi musit whiff soils built whiss unais shits folia axing smith swiss lazzi igloo valis ohing akita layin opium oubit thali aphis laigh oping huias bunia logoi spina spail stilt unify labis sushi slink avian whist snibs kaiks shtik shoji taigs blist swill sahib mokis twixt plain aalii topis thing basij plink sakis ahint aviso quoin untin hajji quais foist opsin spifs atilt qapik sklim quist unmix obiit stims faiks lamia immix taits skips knits phish lungi glias squib paisa ambit qubit whiny patio amias sting zayin palpi tophi jails blink umami shily kliks izzat tails swits slain spins nails apish unfix slims snips twink plait anion thigs foils moils lysin stoit apian kakis slimy kaika login phial illth kanji quits assai basis unwit stoai stint union boing poilu twill ahigh shiva savin takis skail bails inlay slits lawin owing align wongi auxin amnio swami twain mutis tawai thilk toits affix amnia swish unlit kylin quoit haint sakti zoism swigs busti gonia motis quims aspis unzip shivs bania ovist whilk anils whins tabis auloi guimp sling oxlip logia flint stivy flail hains voips satai zamia bambi agist swims whips still unity bling salix spain gonif kains inspo haiku hutia laiks spink smits fuzil sakai fungi pubis anvil glisk swain flitt imshi saint katis twigs flims zuzim snipy aking mavis immit zombi buist hoing oobit ixnay whits gamin basti skins hafiz ikans guqin input again sails awing fains spiny fugio ovoli bhaji tutti bliny imino xysti lassi takin loins fujis fagin noisy yomim igapo snift atimy batik satin skimp kaiak tangi labia panim voila laity guilt point ayins quins taint mujik quasi onium stink glint haiks shist pavin basin hying kamis mythi whift nkosi hakim satis spahi mavin aging snail glift maiks yonis quipo iambi khaki palki ghazi impis pavis blits kuias inula sakia quiff going twilt katti thigh polio snits onion waist takhi stilb bliss sozin bolix agita skill until toxin maill oggin blain pains paiks boink nomoi manis punji mafia olios taish apism avail agila sunis aumil psion toils haith amino innit ilium spill aloin balti noils stipa ingan joins saist tamin hoiks shims skivy blimy amity styli nabis staig ugali shill ilial sampi nying nooit quoif shogi maist happi oxims snigs goyim moits nubia boils sumis pulik pugil kazis polis maiko natis axils amiga zoist pyins tafia alist nashi folio slish faith lysis oboli powin buffi whigs ahing palis lakin booai whipt vying imams swink appui lapin spims blitz gobis fusil amigo iambs ouija whios gojis putti matin suint naiks spivs alibi stimy pyxis skink lupin yagis tains ixias animi fling okapi kulfi glibs hails bavin quilt wails whisk spoil gliff nonis kaifs mania sluit maims iotas tholi lumbi gusli glits matai impot azuki globi laika thagi tulip stain ikons hajis glial blimp glitz thymi hoist ngati maxis lying kaims alias byssi mufti baisa tapis obits baiza quail stiff sylis using await whish twins yogis imago suits wains motif muist bwazi aswim flips anima gaily apiol sasin inion gobbi pappi whity bassi gaits hangi aliya quint thaim tying anigh pulis twits fails maqui intil quina habit mains skios alifs panni iglus spial twiny tanti blips amins antis paoli baits spitz saith ajiva ostia louis omits vakil volti shiso ngaio gains spiky glaik patin unfit aboil swift vails isbas hongi units imaum kojis tuina swail kalis shiny kylix unhip slips blini think amain umiaq saims algin ippon laith naifs noint skims quill skits maxim shish shift taiga yogin kaing foins inapt tomia quino spiff blins malik ohias  -------------------------- 
+
+ Iteration 2/6
+*Applying guess word: 	 glias
+	 Removing Letters Everywhere l
+		 Removing Letters ['l', 'l', 'l', 'l', 'l'] at locations [0, 1, 2, 3, 4]
+	 Removing Letters Everywhere a
+		 Removing Letters ['a', 'a', 'a', 'a', 'a'] at locations [0, 1, 2, 3, 4]
+	 Removing Letters Everywhere s
+		 Removing Letters ['s', 's', 's', 's', 's'] at locations [0, 1, 2, 3, 4]
+	 Setting Letter to Only i at locations 2
+Number of Iterations on Board 2
+Lenght of remaining word list: 12
+Available at Location 0:	-b---f-hijk-mnopq--tuvwxyz
+Available at Location 1:	-b---fgh-jk-mnopq--tuvwxyz
+Available at Location 2:	--------i-----------------
+Available at Location 3:	-b---fghijk-mnopq--tuvwxyz
+Available at Location 4:	-b---fghijk-mnopq--tuvwxyz
+Remaing Words: 
+	
+vying toing ohing hoing nying thing boing owing hying tying thigh oping  -------------------------- 
+
+ Iteration 3/6
+*Applying guess word: 	 hoing
+	 Removing Letters Everywhere h
+		 Removing Letters ['h', 'h', 'h', 'h', 'h'] at locations [0, 1, 2, 3, 4]
+	 Removing Letters Everywhere o
+		 Removing Letters ['o', 'o', 'o', 'o', 'o'] at locations [0, 1, 2, 3, 4]
+	 Setting Letter to Only i at locations 2
+	 Setting Letter to Only n at locations 3
+	 Setting Letter to Only g at locations 4
+Number of Iterations on Board 3
+Lenght of remaining word list: 3
+Available at Location 0:	-b---f--ijk-mn-pq--tuvwxyz
+Available at Location 1:	-b---fg--jk-mn-pq--tuvwxyz
+Available at Location 2:	--------i-----------------
+Available at Location 3:	-------------n------------
+Available at Location 4:	------g-------------------
+Remaing Words: 
+	
+vying tying nying  -------------------------- 
+
+ Iteration 4/6
+*Applying guess word: 	 nying
+	 Setting Letter to Only y at locations 1
+	 Setting Letter to Only i at locations 2
+	 Setting Letter to Only n at locations 3
+	 Setting Letter to Only g at locations 4
+Number of Iterations on Board 4
+Lenght of remaining word list: 2
+Available at Location 0:	-b---f--ijk-m--pq--tuvwxyz
+Available at Location 1:	------------------------y-
+Available at Location 2:	--------i-----------------
+Available at Location 3:	-------------n------------
+Available at Location 4:	------g-------------------
+Remaing Words: 
+	
+vying tying  -------------------------- 
+
+ Iteration 5/6
+*Applying guess word: 	 tying
+	 Removing Letters Everywhere t
+		 Removing Letters ['t', 't', 't', 't', 't'] at locations [0, 1, 2, 3, 4]
+	 Setting Letter to Only y at locations 1
+	 Setting Letter to Only i at locations 2
+	 Setting Letter to Only n at locations 3
+	 Setting Letter to Only g at locations 4
+Number of Iterations on Board 5
+Lenght of remaining word list: 1
+Available at Location 0:	-b---f--ijk-m--pq---uvwxyz
+Available at Location 1:	------------------------y-
+Available at Location 2:	--------i-----------------
+Available at Location 3:	-------------n------------
+Available at Location 4:	------g-------------------
+ONLY WORD LEFT: {'vying'}
+ -------------------------- 
+
+ YOU WIN!: VYING 

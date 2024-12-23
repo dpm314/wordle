@@ -1,2 +1,3 @@
 # wordle
-NYT wordle puzzle solver and game tools Inital Commit 11_22_24
+NYT wordle puzzle solver and game tools 
+Inital commit 11_22_24
