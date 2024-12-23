@@ -90,7 +90,9 @@ class Guess:
         self.text = guessText
         self.printText = ""
         self.letterStatus = []
-        self.setText(guessText)
+
+    def addText(self, nextChar):
+        self.text += nextChar
 
     def setText(self, text):
         self.text = text
