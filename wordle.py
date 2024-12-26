@@ -89,10 +89,10 @@ def newStandardBoard(printNothing=False, printTheDiagnostics=False, answer=None,
         print("The ANSWER is: {}".format(board.ANSWER))
     return board
 
-<<<<<<< HEAD
 class Guess:
-    def __init__(self, guessText=""):
+    def __init__(self, guessText="", guessData = {} ):
         self.text = guessText
+        self.guessData = guessData
         self.printText = ""
         self.letterStatus = []
 
@@ -106,18 +106,30 @@ class Guess:
         self.letterStatus = letterStatusList
 
     def _genPrintText(self):
-        # if len(self.text) == 0:
-        #    return ""
 
-        pstr = TXT_COLORS.BOLD + ""
-        for i in range(len(self.text)):
-            pstr += LETTER_COLOR_DICT[self.letterStatus[i]] + " "
-            +self.text[i].upper()
-        return pstr
+        # pstr = TXT_COLORS.BOLD + ""
+        # for i in range(len(self.text)):
+        #     pstr += LETTER_COLOR_DICT[self.letterStatus[i]] + " "
+        #     +self.text[i].upper()
+        # return pstr
+
+        CLEANUP !
+        for i in range(len(self.guessT) ):
+            if guessWord[i] not in self.ANSWER:
+                self.removeLettersEverywhere(guessWord[i])
+                guessText += LETTER_COLOR_DICT[_NOT] + guessWord[i].upper()
+            if guessWord[i] == self.ANSWER[i]:
+                self.setOnlyLetter(guessWord[i], i)
+                guessText += LETTER_COLOR_DICT[_HERE]+ guessWord[i].upper()
+        # Check letter is somewhere but not here:
+            if guessWord[i] in self.ANSWER:
+                if guessWord[i] is not self.ANSWER[i]:
+                    # guessWord letter is in the word but not here (at location i)
+                    self.removeLetterAtLocation(guessWord[i], i)
+                    self.mustHaveLetter(guessWord[i])
+                    guessText += LETTER_COLOR_DICT[_SOMEWHERE]+ guessWord[i].upper()
 
 
-=======
->>>>>>> refs/remotes/origin/main
 class WordleBoard:
 
     _words = readWordleWordSet()
@@ -281,6 +293,16 @@ class WordleBoard:
     def setAnswer(self, answer):
         self.ANSWER = answer
 
+    def _assembleGuessData(self):
+        guessData = {}
+        guessData['currentWordList'] = self.currentWordList # actually a set fwiw
+        guessData['boardIterations'] = self.boardIterations
+        guessData['available']       = self.available
+        guessData['boardMapStr']     = self.genBoardMapStr
+        guessData['ANSWER']          = self.ANSWER
+        
+        return guessData
+
     def applyGuess(self, guessWord=None):
         """
             _NOT       = 0
@@ -333,7 +355,9 @@ class WordleBoard:
         mapStr = self.genBoardMapStr()
         
         self.guessList.append(
-            Guess( )
+            Guess( 
+                guessText = guessWord,
+                guessData = self._assembleGuessData() )
             )
 
         self._checkWon()
@@ -370,32 +394,8 @@ class WordleBoard:
     #     print("printAnswer !!!")
     #     print("\{}\ \n".format(self.ANSWER) )
 
-class Guess(WordleBoard):
-    def __init__(self, guessWord = '', guessText='', boardMapText = ''):
-        #super().__init__()
-        #self.guessWord = guessWord
-        #self.guessText = guessText
-        #self.boardMapText = copy.copy( boardMapText )
-        
-
-        #print(self.ANSWER)
-        print(super().ANSWER)
-
-        #self.text = "from Guess().__init__(): {}".format(
-            #self.ANSWER    )
-            #super().ANSWER )
-
-        #print(self.text)
-        #self.remainingWords    = copy.copy( super().currentWordList )
-        #self.remainingWordsLen = len(self.remainingWords)
-
-    def printMe(self):
-        #print(self.guessText + " " + TXT_COLORS.DEFAULT)
-        #print(self.boardMapText)
-        print("Num Remaining Words: {}".format(self.len(currentWordList)))
-
 #%%
-b = newStandardBoard(printTheDiagnostics = True, answer = None)
+b = newStandardBoard(printTheDiagnostics = True, answer = 'FLASH')
 b.playAutoGen(maxIterations=6)
 
 #%%
@@ -405,41 +405,19 @@ for g in b.guessList:
     print( print(g.guessText) )
 #%%
 
-# super() testing:
-class Parent:
-    def __init__(self,name='Jack'):
-        self.name = name
+# # super() testing:
+# class Parent:
+#     def __init__(self,name='Jack'):
+#         self.name = name
 
-class Printer(Parent):
-    def __init__(self):
-        super().__init__()
-        self.printerName = super().name
-    def printName(self):
-        print("Printer.printName() self.name : \t {}".format( self.name ))
-        print("self.printerName : \t {}".format( self.printerName ))
+# class Printer(Parent):
+#     def __init__(self):
+#         super().__init__()
+#         self.printerName = super().name
+#     def printName(self):
+#         print("Printer.printName() self.name : \t {}".format( self.name ))
+#         print("self.printerName : \t {}".format( self.printerName ))
 
-
-
-#%%
-p = Parent()
-p.printName()
-#%%
-pr = Printer(p)
-#%%
-a = newStandardBoard(printNothing=False, 
-                     printTheDiagnostics=True,
-                     answer="slate")
-a.applyGuess()
-a.applyGuess()
-
-# Ideas: makye make a fake .applyGuess() which
-#   tries applying a guess to a copy.copy list of
-#   .currentWordList and a.available then
-#   counts len(.currentWordList) for each and
-#   returns the guess which shortens .currentWordList
-#   the most ?
-
-# maybe work by histograms per letter in .available ? That's closer
 #%%
 
 def chomper(boardSlice):
