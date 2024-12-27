@@ -13,7 +13,6 @@ import copy
 import random
 import time
 
-
 class TXT_COLORS:
     # could do: class TXT_COLORS(Enum) #with apppropriate import Enum
     black = "\033[30m"
@@ -90,20 +89,10 @@ def newStandardBoard(printNothing=False, printTheDiagnostics=False, answer=None,
     return board
 
 class Guess:
-    def __init__(self, guessText="", guessData = {} ):
-        self.text = guessText
+    def __init__(self, guessWord = '', guessData = {} ):
+        self.guessWord = guessWord
         self.guessData = guessData
-        self.printText = ""
-        self.letterStatus = []
-
-    def addText(self, nextChar):
-        self.text += nextChar
-
-    def setText(self, text):
-        self.text = text
-
-    def setLetterStatus(self, letterStatusList):
-        self.letterStatus = letterStatusList
+        self.printText = self._genPrintText()
 
     def _genPrintText(self):
 
@@ -112,23 +101,18 @@ class Guess:
         #     pstr += LETTER_COLOR_DICT[self.letterStatus[i]] + " "
         #     +self.text[i].upper()
         # return pstr
+        guessText = ''
 
-        CLEANUP !
-        for i in range(len(self.guessT) ):
-            if guessWord[i] not in self.ANSWER:
-                self.removeLettersEverywhere(guessWord[i])
-                guessText += LETTER_COLOR_DICT[_NOT] + guessWord[i].upper()
-            if guessWord[i] == self.ANSWER[i]:
-                self.setOnlyLetter(guessWord[i], i)
-                guessText += LETTER_COLOR_DICT[_HERE]+ guessWord[i].upper()
-        # Check letter is somewhere but not here:
-            if guessWord[i] in self.ANSWER:
-                if guessWord[i] is not self.ANSWER[i]:
-                    # guessWord letter is in the word but not here (at location i)
-                    self.removeLetterAtLocation(guessWord[i], i)
-                    self.mustHaveLetter(guessWord[i])
-                    guessText += LETTER_COLOR_DICT[_SOMEWHERE]+ guessWord[i].upper()
+        for i in range(len(self.guessWord)):
 
+            if self.guessWord[i] ==    self.guessData['ANSWER'][i]:
+                self.guessWord  += LETTER_COLOR_DICT[_HERE]
+            elif self.guessWord[i] not in self.guessData['ANSWER']:
+                guessText += LETTER_COLOR_DICT[_NOT]
+            elif self.guessWord[i] in          self.guessData['ANSWER']:
+                    guessText += LETTER_COLOR_DICT[_SOMEWHERE]
+            guessText += self.guessWord[i].upper()
+        return( guessText )
 
 class WordleBoard:
 
@@ -293,13 +277,14 @@ class WordleBoard:
     def setAnswer(self, answer):
         self.ANSWER = answer
 
-    def _assembleGuessData(self):
+    def _assembleGuessData(self, guessWord = ""):
         guessData = {}
-        guessData['currentWordList'] = self.currentWordList # actually a set fwiw
-        guessData['boardIterations'] = self.boardIterations
-        guessData['available']       = self.available
-        guessData['boardMapStr']     = self.genBoardMapStr
-        guessData['ANSWER']          = self.ANSWER
+        guessData['guessWord']       = copy.copy( guessWord )
+        guessData['currentWordList'] = copy.copy( self.currentWordList ) # actually a set fwiw
+        guessData['boardIterations'] = copy.copy( self.boardIterations )
+        guessData['available']       = copy.copy( self.available )
+        guessData['boardMapStr']     = copy.copy( self.genBoardMapStr )
+        guessData['ANSWER']          = copy.copy( self.ANSWER )
         
         return guessData
 
@@ -356,7 +341,7 @@ class WordleBoard:
         
         self.guessList.append(
             Guess( 
-                guessText = guessWord,
+                guessWord = guessWord,
                 guessData = self._assembleGuessData() )
             )
 
@@ -390,13 +375,16 @@ class WordleBoard:
                 print("\n Iteration {}/{}".format(iterCount, maxIterations))
             self.applyGuess()
 
-    # def printAnswer(self):
-    #     print("printAnswer !!!")
-    #     print("\{}\ \n".format(self.ANSWER) )
+    def printGuesses(self):
+        print( TXT_COLORS.DEFAULT, end='')
+        for g in self.guessList:
+            print(g.printText)
+            print(TXT_COLORS.DEFAULT, end='')
 
 #%%
-b = newStandardBoard(printTheDiagnostics = True, answer = 'FLASH')
+b = newStandardBoard(printTheDiagnostics = True, answer = 'AMIGO')
 b.playAutoGen(maxIterations=6)
+b.printGuesses()
 
 #%%
 for g in b.guessList:
