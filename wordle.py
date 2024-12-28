@@ -260,7 +260,7 @@ class WordleBoard:
 
     def printFinalSummary(self, tailText=""):
         print("---------------------------------")
-        for g in self.guessList():
+        for g in self.guessList:
             print("---------------------------------")
             g.printMe()
 
@@ -283,7 +283,7 @@ class WordleBoard:
         guessData['currentWordList'] = copy.copy( self.currentWordList ) # actually a set fwiw
         guessData['boardIterations'] = copy.copy( self.boardIterations )
         guessData['available']       = copy.copy( self.available )
-        guessData['boardMapStr']     = copy.copy( self.genBoardMapStr )
+        guessData['boardMapStr']     = copy.copy( self.genBoardMapStr() )
         guessData['ANSWER']          = copy.copy( self.ANSWER )
         
         return guessData
@@ -321,11 +321,11 @@ class WordleBoard:
             if guessWord[i] not in self.ANSWER:
                 self.removeLettersEverywhere(guessWord[i])
                 guessText += LETTER_COLOR_DICT[_NOT] + guessWord[i].upper()
-            if guessWord[i] == self.ANSWER[i]:
+            elif guessWord[i] == self.ANSWER[i]:
                 self.setOnlyLetter(guessWord[i], i)
                 guessText += LETTER_COLOR_DICT[_HERE]+ guessWord[i].upper()
         # Check letter is somewhere but not here:
-            if guessWord[i] in self.ANSWER:
+            elif guessWord[i] in self.ANSWER:
                 if guessWord[i] is not self.ANSWER[i]:
                     # guessWord letter is in the word but not here (at location i)
                     self.removeLetterAtLocation(guessWord[i], i)
@@ -334,22 +334,26 @@ class WordleBoard:
         # Store for future diagnostics etc:
 
         #guessText += "\n"
+        
+        #TODO: should do this in Guess() !
         self.boardMaps.append( self.genBoardMapStr() )
 
         self.boardIterations += 1
-        mapStr = self.genBoardMapStr()
-        
+        self._checkWon()
+
+        print("&&&& Using guessWord: )
+    c   print(guessWord)
         self.guessList.append(
             Guess( 
                 guessWord = guessWord,
                 guessData = self._assembleGuessData() )
             )
 
-        self._checkWon()
-
         if self.printTheDiagnostics:
             self.printDiagnostics()
-
+            print(self.genBoardMapStr() )
+            b.printCurrentWordListFancy()
+            print(TXT_COLORS.DEFAULT + "\n")
         if self.WON == True:
             self._printYouWon()
 
@@ -357,15 +361,16 @@ class WordleBoard:
 
         self.WON = False  # Probably unnecessary but for clarity
         if len(self.currentWordList) == 1:
-            if next(iter(self.currentWordList)) == self.ANSWER:
-                self.WON = True
+            #if next(iter(self.currentWordList)) == self.ANSWER:
+            self.WON == True
 
     def _printYouWon(self):
         if self.printNothing == False:
-            print( TXT_COLORS.BOLD
+            if self.WON == True:
+                print( TXT_COLORS.BOLD
                    + "\n YOU WIN!: {} \n"
                   .format(next(iter(self.currentWordList)).upper())
-            )
+                  )
 
     def playAutoGen(self, maxIterations=6):
         iterCount = 0
@@ -381,16 +386,17 @@ class WordleBoard:
             print(g.printText)
             print(TXT_COLORS.DEFAULT, end='')
 
-#%%
-b = newStandardBoard(printTheDiagnostics = True, answer = 'AMIGO')
-b.playAutoGen(maxIterations=6)
-b.printGuesses()
+TODO: Why does print guessWord from Guess() instances have color stuff in the string ? 
+
 
 #%%
-for g in b.guessList:
-    g.printMe()
-for g in b.guessList:
-    print( print(g.guessText) )
+#AFFIX
+b = newStandardBoard(printTheDiagnostics = True, answer = 'AFFIX')
+b.playAutoGen(maxIterations=6) #%%
+# for g in b.guessList:
+#     g.printMe()
+# for g in b.guessList:
+#     print( print(g.guessText) )
 #%%
 
 # # super() testing:
@@ -411,13 +417,13 @@ for g in b.guessList:
 def chomper(boardSlice):
     #[b.playAutoGen() for b in boardSlice]
     for b in boardSlice:
-        b.playAutoGen(maxIterations=maxIterations)
+        b.playAutoGen(maxIterations=maxIterations, 
     #return boardSlice
     return boardSlice
 
 itersReq = []
 maxIterations = 6
-numGames = 256
+numGames = 64
 numPools = 8
 numBoardsPerPool = int( numGames / numPools )
 
