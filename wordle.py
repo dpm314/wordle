@@ -50,7 +50,7 @@ class TXT_COLORS:
 _NOT = 0
 _SOMEWHERE = 1
 _HERE = 2
-_WON = 2
+_WON = 3
 
 
 LETTER_COLOR_DICT = {
